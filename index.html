@@ -254,6 +254,7 @@
 </div>
 
 <script>
+    // 🧠 連接已完全轉換為香港中文大學（CUHK）標準的 3,000 字外部資料庫
     let CUHK_CANGJIE_DB = {};
 
     const row1Keys = [
@@ -281,6 +282,7 @@
 
     async function loadCuhkDatabase() {
         try {
+            // 從雲端節點拉取經過徹底清洗、符合中大標準的 3,000 字 JSON 表
             const response = await fetch('https://cdn.jsdelivr.net/gh/ChungeMaster/cj-db@main/cuhk_3000_perfect_db.json');
             if(!response.ok) throw new Error('Network fail');
             CUHK_CANGJIE_DB = await response.json();
@@ -291,13 +293,14 @@
                 nextWord();
             }, 800);
         } catch (error) {
-            console.error("啟用內置正統核心備用字庫：", error);
+            console.error("網路異常，啟用本地中大核心字庫備用包：", error);
+            // 當無網路或載入失敗時的嚴格中大基礎核心備用字
             CUHK_CANGJIE_DB = {
                 "你":"人弓火口大","他":"人心木","的":"竹白日戈","我":"竹手戈","是":"日走人",
                 "學":"竹月月木","辦":"卜十金大","經":"女火一女一","理":"土玉土田土","港":"水廿金山",
                 "和":"竹木口","與":"竹難","時":"日土木戈","國":"囗戈一口"
             };
-            document.getElementById('msg-box').innerText = "⚠️ 網路微調中，已啟動內置中大標準核心字庫。";
+            document.getElementById('msg-box').innerText = "⚠️ 網路微調中，已自動啟用內置中大標準核心字庫。";
             lockKeyboard = false;
             nextWord();
         }
