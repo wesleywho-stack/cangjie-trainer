@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>跨平台版：倉頡/速成字根修煉場</title>
+    <title>跨平台版：全中文字動態倉頡/速成修煉場</title>
     <style>
         * {
             box-sizing: border-box;
@@ -100,14 +100,15 @@
             .input-display { font-size: 28px; min-height: 42px; min-width: 200px; letter-spacing: 8px; }
         }
         .message-container {
-            min-height: 70px;
+            min-height: 80px;
             margin-bottom: 15px;
             padding: 10px;
             border-radius: 12px;
             background-color: #20212c;
+            text-align: left;
         }
-        .message { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
-        .explanation { font-size: 13px; color: #b4b7c6; line-height: 1.4; }
+        .message { font-size: 15px; font-weight: bold; margin-bottom: 5px; text-align: center; }
+        .explanation { font-size: 13px; color: #b4b7c6; line-height: 1.5; text-align: center; }
         @media (min-width: 600px) {
             .message { font-size: 18px; }
             .explanation { font-size: 14px; }
@@ -133,11 +134,6 @@
             justify-content: center;
             gap: 4px;
             width: 100%;
-        }
-        @media (min-width: 600px) {
-            .keyboard-row { gap: 6px; }
-            .row-2 { padding-left: 15px; }
-            .row-3 { padding-left: 30px; }
         }
 
         .key {
@@ -173,7 +169,6 @@
             .key .cj-char { font-size: 18px; }
             .key .eng-char { font-size: 11px; margin-top: 2px; }
         }
-        .key.pressed .eng-char, .key:active .eng-char { color: #555; }
 
         .control-btns {
             display: flex;
@@ -205,7 +200,7 @@
 <body>
 
 <div class="game-container">
-    <h1>🎯 倉頡/速成跨平台修煉場</h1>
+    <h1>🎯 倉頡/速成跨平台修煉場 (隨機全字庫版)</h1>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -213,11 +208,11 @@
     </div>
 
     <div class="mode-selector">
-        <button class="mode-btn" id="btn-quick" onclick="setMode('quick')">速成模式</button>
-        <button class="mode-btn active" id="btn-cj" onclick="setMode('cj')">倉頡模式</button>
+        <button class="mode-btn" id="btn-quick" onclick="setMode('quick')">速成模式 (頭尾)</button>
+        <button class="mode-btn active" id="btn-cj" onclick="setMode('cj')">倉頡模式 (全碼)</button>
     </div>
 
-    <div class="word-display" id="target-word">江</div>
+    <div class="word-display" id="target-word">-</div>
     <div class="input-display" id="user-input"></div>
     
     <div class="message-container">
@@ -238,17 +233,19 @@
 </div>
 
 <script>
-    const wordBank = [
-        { word: "江", quick: "水工", cj: "水工", exp: "【左左右右結構】左邊是字首『氵（部首為水）』，右邊是字身『工』。因此速成與倉頡皆為：水 + 工。" },
-        { word: "和", quick: "竹口", cj: "竹木口", exp: "【左右結構】左邊字首『禾』拆為『竹 + 木』；右邊字身是『口』。<br>速成取頭尾：竹 + 口。倉頡取全碼：竹 + 木 + 口。" },
-        { word: "校", quick: "木交", cj: "木交大", exp: "【左右結構】左邊字首『木』本身是字根；右邊字身『交』拆為『亠(卜/交) + 父(最後為大)』。<br>速成取頭尾：木 + 交。倉頡取全碼：木 + 交 + 大。" },
-        { word: "時", quick: "日寸", cj: "日土木", exp: "【左右結構】左邊字首『日』本身是字根；右邊字身『寺』拆為『土 + 寸(最後一碼是木)』。<br>速成取頭尾：日 + 寸（尾碼取木）。倉頡全碼：日 + 土 + 木。" },
-        { word: "港", quick: "水山", cj: "水共己", exp: "【左右結構】左邊字首『氵』為『水』；右邊字身『巷』的最上面是『共(屬山)』，最下面是『己(屬弓)』。<br>速成取頭尾：水 + 山。倉頡全碼：水 + 共(山) + 己(弓)。" },
-        { word: "明", quick: "日月", cj: "日月", exp: "【左右結構】左邊字首是『日』，右邊字身是『月』。因此速成與倉頡完全一樣，皆為：日 + 月。" },
-        { word: "的", quick: "竹戈", cj: "竹白戈", exp: "【左右結構】左邊字首『白』頭碼為竹；右邊字身『勺』尾碼為戈。<br>速成取頭尾：竹 + 戈。填寫倉頡全碼為：竹 + 白 + 戈。" },
-        { word: "我", quick: "手戈", cj: "手戈", exp: "【獨體字】『我』字為固定字根組合。頭碼為『手』，尾碼為『戈』。速成與倉頡皆為：手 + 戈。" },
-        { word: "是", quick: "日人", cj: "日正人", exp: "【上下結構】上邊字首是『日』；下邊字身是『疋』，拆為『正(一) + 人』。<br>速成取頭尾：日 + 人。倉頡全碼：日 + 正(一) + 人。" }
-    ];
+    // 📊 擴展版核心字庫群組 (包含各類常用字根組合結構)
+    const CANGJIE_DB = {
+        "江": "水工", "和": "竹木口", "校": "木卜交大", "時": "日土木戈", "港": "水廿金山", 
+        "明": "日月", "的": "竹白日戈", "我": "竹手戈", "是": "日走人", "天": "一大", 
+        "地": "土做事", "人": "人", "大": "大", "中": "中", "國": "囗戈一回", "學": "竹頭月木", 
+        "文": "卜大", "理": "王里", "工": "工", "作": "人竹一一", "你": "人爾", "他": "人也", 
+        "新": "立木斤", "年": "人手十", "快": "心決", "樂": "白女木", "生": "竹手一", 
+        "日": "日", "月": "月", "山": "山", "水": "水", "火": "火", "木": "木", "土": "土", 
+        "金": "金", "田": "田", "石": "石", "看": "手目", "聽": "耳心", "說": "言兌", 
+        "讀": "言賣", "寫": "十月一", "字": "十子", "出": "山山", "入": "入", "分": "八刀",
+        "春": "手大日", "夏": "一自夂", "秋": "火竹木", "冬": "夂一一", "海": "水每", 
+        "空": "十金一", "能": "戈月匕匕", "道": "卜首", "路": "足路", "車": "十田十"
+    };
 
     const row1Keys = [
         {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"}, {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
@@ -263,7 +260,7 @@
     const allKeys = [...row1Keys, ...row2Keys, ...row3Keys];
 
     let currentMode = 'cj'; 
-    let currentIndex = 0;
+    let currentCharacter = "";
     let currentInput = "";
     
     let scoreX = 0; 
@@ -278,7 +275,6 @@
             btn.id = `key-${k.eng}`;
             btn.innerHTML = `<span class="cj-char">${k.cj}</span><span class="eng-char">${k.eng}</span>`;
             
-            // Fixed mobile touch responsiveness logic
             const pressHandler = (e) => {
                 e.preventDefault();
                 handleKeyPress(k.cj, k.eng);
@@ -288,7 +284,6 @@
             
             btn.addEventListener('touchstart', pressHandler, {passive: false});
             btn.addEventListener('mousedown', (e) => {
-                // If it's touched, mousedown might also trigger on hybrid systems, ignore it if handled
                 if (e.pointerType === 'touch') return;
                 handleKeyPress(k.cj, k.eng);
             });
@@ -301,7 +296,6 @@
     renderRow('kbd-row-2', row2Keys);
     renderRow('kbd-row-3', row3Keys);
 
-    // Desktop Hardware Keyboard Handlers (macOS / Windows PC)
     document.addEventListener('keydown', (e) => {
         const char = e.key.toUpperCase();
         if (char === 'ENTER') {
@@ -340,17 +334,28 @@
         document.getElementById('user-input').innerText = "";
     }
 
+    // 🎲 演算法：從擴展字庫隨機挑選字元並動態計算拆碼結果
     function nextWord() {
-        let newIndex = currentIndex;
-        while (newIndex === currentIndex) {
-            newIndex = Math.floor(Math.random() * wordBank.length);
+        const keys = Object.keys(CANGJIE_DB);
+        let newChar = currentCharacter;
+        
+        while (newChar === currentCharacter) {
+            newChar = keys[Math.floor(Math.random() * keys.length)];
         }
-        currentIndex = newIndex;
-        document.getElementById('target-word').innerText = wordBank[currentIndex].word;
+        
+        currentCharacter = newChar;
+        document.getElementById('target-word').innerText = currentCharacter;
         hasAnsweredCurrent = false; 
         clearInput();
         document.getElementById('msg-box').innerText = "";
         document.getElementById('exp-box').innerText = "";
+    }
+
+    // 🧮 演算法：傳入全碼，自動計算其對應的速成碼（取頭、尾）
+    function getQuickCode(fullCjCode) {
+        if (!fullCjCode) return "";
+        if (fullCjCode.length <= 2) return fullCjCode;
+        return fullCjCode[0] + fullCjCode[fullCjCode.length - 1];
     }
 
     function updateScoreboard() {
@@ -363,8 +368,10 @@
     function checkAnswer() {
         if (currentInput === "") return;
 
-        const currentData = wordBank[currentIndex];
-        const correctAnswer = currentMode === 'quick' ? currentData.quick : currentData.cj;
+        const cjAnswer = CANGJIE_DB[currentCharacter];
+        const quickAnswer = getQuickCode(cjAnswer);
+        const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+        
         const msgBox = document.getElementById('msg-box');
         const expBox = document.getElementById('exp-box');
 
@@ -379,7 +386,7 @@
 
             msgBox.className = "message success";
             msgBox.innerText = "🎉 太棒了！完全正確！";
-            expBox.innerHTML = currentData.exp;
+            expBox.innerHTML = `字形【${currentCharacter}】的倉頡全碼為：${cjAnswer} ｜ 速成頭尾碼為：${quickAnswer}`;
             setTimeout(() => {
                 nextWord();
             }, 2000); 
@@ -388,14 +395,13 @@
 
             msgBox.className = "message error";
             msgBox.innerText = `❌ 答錯囉！正確答案是：【${correctAnswer}】`;
-            expBox.innerHTML = `<strong>拆碼大解密：</strong><br>${currentData.exp}`;
+            expBox.innerHTML = `<strong>拆碼提示：</strong><br>字形【${currentCharacter}】的標準倉頡全編碼為：${cjAnswer}`;
             
             currentInput = "";
             document.getElementById('user-input').innerText = "";
         }
     }
 
-    // Start Game
     nextWord();
 </script>
 
