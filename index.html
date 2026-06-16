@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>跨平台版：倉頡/速成字根修煉場</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #1e1e24;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 10px;
+        }
+        .game-container {
+            background-color: #2a2b36;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 100%;
+            max-width: 850px;
+        }
+        @media (min-width: 600px) {
+            .game-container { padding: 40px; border-radius: 24px; }
+        }
+        h1 { color: #00d2ff; margin-top: 0; font-size: 22px; margin-bottom: 10px; }
+        @media (min-width: 600px) { h1 { font-size: 28px; } }
+        
+        .scoreboard {
+            background-color: #20212c;
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #f1c40f;
+            margin-bottom: 15px;
+            border: 1px solid #3a3b4c;
+        }
+
+        .mode-selector { margin-bottom: 20px; display: flex; justify-content: center; gap: 8px; }
+        .mode-btn {
+            background-color: #3a3b4c;
+            border: 2px solid #4a4b62;
+            color: #aaa;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            transition: all 0.2s;
+            flex: 1;
+            max-width: 180px;
+        }
+        @media (min-width: 600px) {
+            .mode-btn { padding: 10px 24px; font-size: 15px; }
+        }
+        .mode-btn.active {
+            background-color: #00d2ff;
+            border-color: #00d2ff;
+            color: #1e1e24;
+            box-shadow: 0 0 15px rgba(0,210,255,0.4);
+        }
+        .word-display {
+            font-size: 64px;
+            font-weight: bold;
+            color: #fff;
+            margin: 15px auto;
+            background: #20212c;
+            width: 110px;
+            height: 110px;
+            line-height: 110px;
+            border-radius: 20px;
+            border: 3px solid #3a3b4c;
+        }
+        @media (min-width: 600px) {
+            .word-display { font-size: 84px; width: 140px; height: 140px; line-height: 140px; }
+        }
+        .input-display {
+            font-size: 24px;
+            min-height: 38px;
+            color: #00d2ff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 6px;
+            border-bottom: 2px solid #3a3b4c;
+            display: inline-block;
+            min-width: 160px;
+        }
+        @media (min-width: 600px) {
+            .input-display { font-size: 28px; min-height: 42px; min-width: 200px; letter-spacing: 8px; }
+        }
+        .message-container {
+            min-height: 70px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 12px;
+            background-color: #20212c;
+        }
+        .message { font-size: 15px; font-weight: bold; margin-bottom: 5px; }
+        .explanation { font-size: 13px; color: #b4b7c6; line-height: 1.4; }
+        @media (min-width: 600px) {
+            .message { font-size: 18px; }
+            .explanation { font-size: 14px; }
+        }
+        .success { color: #2ecc71; }
+        .error { color: #ff4757; }
+        
+        .keyboard {
+            background-color: #15151c;
+            padding: 8px;
+            border-radius: 16px;
+            border: 3px solid #3a3b4c;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        @media (min-width: 600px) {
+            .keyboard { padding: 15px; border: 4px solid #3a3b4c; gap: 6px; }
+        }
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            width: 100%;
+        }
+        @media (min-width: 600px) {
+            .keyboard-row { gap: 6px; }
+            .row-2 { padding-left: 15px; }
+            .row-3 { padding-left: 30px; }
+        }
+
+        .key {
+            background: linear-gradient(135deg, #3a3b4c, #2d2e3d);
+            border: 1px solid #4a4b62;
+            color: #fff;
+            flex: 1;
+            max-width: 54px;
+            height: 46px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 0 3px 0 #1a1b24;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.05s;
+            touch-action: manipulation;
+        }
+        @media (min-width: 600px) {
+            .key { height: 54px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #1a1b24; }
+        }
+        .key:active, .key.pressed {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #1a1b24;
+            background: #00d2ff;
+            color: #1e1e24;
+        }
+        .key .cj-char { font-size: 15px; font-weight: bold; }
+        .key .eng-char { font-size: 9px; color: #888; margin-top: 1px; }
+        @media (min-width: 600px) {
+            .key .cj-char { font-size: 18px; }
+            .key .eng-char { font-size: 11px; margin-top: 2px; }
+        }
+        .key.pressed .eng-char, .key:active .eng-char { color: #555; }
+
+        .control-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .ctrl-btn {
+            background-color: #4e5066;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+            flex: 1;
+            max-width: 200px;
+            touch-action: manipulation;
+        }
+        @media (min-width: 600px) {
+            .ctrl-btn { padding: 12px 30px; font-size: 16px; }
+        }
+        .ctrl-btn:hover { background-color: #5f627d; }
+        .ctrl-btn.submit { background-color: #2ecc71; }
+        .ctrl-btn.submit:hover { background-color: #27ae60; }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <h1>🎯 倉頡/速成跨平台修煉場</h1>
+    
+    <div class="scoreboard">
+        📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
+        (<span id="score-percent">0%</span>)
+    </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn" id="btn-quick" onclick="setMode('quick')">速成模式</button>
+        <button class="mode-btn active" id="btn-cj" onclick="setMode('cj')">倉頡模式</button>
+    </div>
+
+    <div class="word-display" id="target-word">江</div>
+    <div class="input-display" id="user-input"></div>
+    
+    <div class="message-container">
+        <div class="message" id="msg-box"></div>
+        <div class="explanation" id="exp-box"></div>
+    </div>
+
+    <div class="keyboard">
+        <div class="keyboard-row row-1" id="kbd-row-1"></div>
+        <div class="keyboard-row row-2" id="kbd-row-2"></div>
+        <div class="keyboard-row row-3" id="kbd-row-3"></div>
+    </div>
+
+    <div class="control-btns">
+        <button class="ctrl-btn" onclick="clearInput()">清除 (BKSP)</button>
+        <button class="ctrl-btn submit" onclick="checkAnswer()">送出答案 (Enter)</button>
+    </div>
+</div>
+
+<script>
+    const wordBank = [
+        { word: "江", quick: "水工", cj: "水工", exp: "【左左右右結構】左邊是字首『氵（部首為水）』，右邊是字身『工』。因此速成與倉頡皆為：水 + 工。" },
+        { word: "和", quick: "竹口", cj: "竹木口", exp: "【左右結構】左邊字首『禾』拆為『竹 + 木』；右邊字身是『口』。<br>速成取頭尾：竹 + 口。倉頡取全碼：竹 + 木 + 口。" },
+        { word: "校", quick: "木交", cj: "木交大", exp: "【左右結構】左邊字首『木』本身是字根；右邊字身『交』拆為『亠(卜/交) + 父(最後為大)』。<br>速成取頭尾：木 + 交。倉頡取全碼：木 + 交 + 大。" },
+        { word: "時", quick: "日寸", cj: "日土木", exp: "【左右結構】左邊字首『日』本身是字根；右邊字身『寺』拆為『土 + 寸(最後一碼是木)』。<br>速成取頭尾：日 + 寸（尾碼取木）。倉頡全碼：日 + 土 + 木。" },
+        { word: "港", quick: "水山", cj: "水共己", exp: "【左右結構】左邊字首『氵』為『水』；右邊字身『巷』的最上面是『共(屬山)』，最下面是『己(屬弓)』。<br>速成取頭尾：水 + 山。倉頡全碼：水 + 共(山) + 己(弓)。" },
+        { word: "明", quick: "日月", cj: "日月", exp: "【左右結構】左邊字首是『日』，右邊字身是『月』。因此速成與倉頡完全一樣，皆為：日 + 月。" },
+        { word: "的", quick: "竹戈", cj: "竹白戈", exp: "【左右結構】左邊字首『白』頭碼為竹；右邊字身『勺』尾碼為戈。<br>速成取頭尾：竹 + 戈。填寫倉頡全碼為：竹 + 白 + 戈。" },
+        { word: "我", quick: "手戈", cj: "手戈", exp: "【獨體字】『我』字為固定字根組合。頭碼為『手』，尾碼為『戈』。速成與倉頡皆為：手 + 戈。" },
+        { word: "是", quick: "日人", cj: "日正人", exp: "【上下結構】上邊字首是『日』；下邊字身是『疋』，拆為『正(一) + 人』。<br>速成取頭尾：日 + 人。倉頡全碼：日 + 正(一) + 人。" }
+    ];
+
+    const row1Keys = [
+        {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"}, {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
+    ];
+    const row2Keys = [
+        {eng:"A", cj:"日"}, {eng:"S", cj:"尸"}, {eng:"D", cj:"木"}, {eng:"F", cj:"火"}, {eng:"G", cj:"土"}, {eng:"H", cj:"竹"}, {eng:"J", cj:"十"}, {eng:"K", cj:"大"}, {eng:"L", cj:"中"}
+    ];
+    const row3Keys = [
+        {eng:"Z", cj:"重"}, {eng:"X", cj:"難"}, {eng:"C", cj:"金"}, {eng:"V", cj:"女"}, {eng:"B", cj:"月"}, {eng:"N", cj:"弓"}, {eng:"M", cj:"一"}
+    ];
+
+    const allKeys = [...row1Keys, ...row2Keys, ...row3Keys];
+
+    let currentMode = 'cj'; 
+    let currentIndex = 0;
+    let currentInput = "";
+    
+    let scoreX = 0; 
+    let scoreY = 0; 
+    let hasAnsweredCurrent = false; 
+
+    function renderRow(rowId, keysArray) {
+        const rowEl = document.getElementById(rowId);
+        keysArray.forEach(k => {
+            const btn = document.createElement('button');
+            btn.className = 'key';
+            btn.id = `key-${k.eng}`;
+            btn.innerHTML = `<span class="cj-char">${k.cj}</span><span class="eng-char">${k.eng}</span>`;
+            
+            // Fixed mobile touch responsiveness logic
+            const pressHandler = (e) => {
+                e.preventDefault();
+                handleKeyPress(k.cj, k.eng);
+                btn.classList.add('pressed');
+                setTimeout(() => btn.classList.remove('pressed'), 100);
+            };
+            
+            btn.addEventListener('touchstart', pressHandler, {passive: false});
+            btn.addEventListener('mousedown', (e) => {
+                // If it's touched, mousedown might also trigger on hybrid systems, ignore it if handled
+                if (e.pointerType === 'touch') return;
+                handleKeyPress(k.cj, k.eng);
+            });
+            
+            rowEl.appendChild(btn);
+        });
+    }
+
+    renderRow('kbd-row-1', row1Keys);
+    renderRow('kbd-row-2', row2Keys);
+    renderRow('kbd-row-3', row3Keys);
+
+    // Desktop Hardware Keyboard Handlers (macOS / Windows PC)
+    document.addEventListener('keydown', (e) => {
+        const char = e.key.toUpperCase();
+        if (char === 'ENTER') {
+            checkAnswer();
+        } else if (char === 'BACKSPACE') {
+            clearInput();
+        } else {
+            const found = allKeys.find(k => k.eng === char);
+            if (found) {
+                handleKeyPress(found.cj, found.eng);
+                const btn = document.getElementById(`key-${char}`);
+                if(btn) {
+                    btn.classList.add('pressed');
+                    setTimeout(() => btn.classList.remove('pressed'), 100);
+                }
+            }
+        }
+    });
+
+    function setMode(mode) {
+        currentMode = mode;
+        document.getElementById('btn-quick').classList.toggle('active', mode === 'quick');
+        document.getElementById('btn-cj').classList.toggle('active', mode === 'cj');
+        clearInput();
+        nextWord();
+    }
+
+    function handleKeyPress(cjChar, engChar) {
+        if (currentMode === 'quick' && currentInput.length >= 2) return; 
+        currentInput += cjChar;
+        document.getElementById('user-input').innerText = currentInput;
+    }
+
+    function clearInput() {
+        currentInput = "";
+        document.getElementById('user-input').innerText = "";
+    }
+
+    function nextWord() {
+        let newIndex = currentIndex;
+        while (newIndex === currentIndex) {
+            newIndex = Math.floor(Math.random() * wordBank.length);
+        }
+        currentIndex = newIndex;
+        document.getElementById('target-word').innerText = wordBank[currentIndex].word;
+        hasAnsweredCurrent = false; 
+        clearInput();
+        document.getElementById('msg-box').innerText = "";
+        document.getElementById('exp-box').innerText = "";
+    }
+
+    function updateScoreboard() {
+        document.getElementById('score-x').innerText = scoreX;
+        document.getElementById('score-y').innerText = scoreY;
+        const percent = scoreY === 0 ? 0 : Math.round((scoreX / scoreY) * 100);
+        document.getElementById('score-percent').innerText = percent + "%";
+    }
+
+    function checkAnswer() {
+        if (currentInput === "") return;
+
+        const currentData = wordBank[currentIndex];
+        const correctAnswer = currentMode === 'quick' ? currentData.quick : currentData.cj;
+        const msgBox = document.getElementById('msg-box');
+        const expBox = document.getElementById('exp-box');
+
+        if (!hasAnsweredCurrent) {
+            scoreY++;
+            hasAnsweredCurrent = true;
+        }
+
+        if (currentInput === correctAnswer) {
+            scoreX++; 
+            updateScoreboard();
+
+            msgBox.className = "message success";
+            msgBox.innerText = "🎉 太棒了！完全正確！";
+            expBox.innerHTML = currentData.exp;
+            setTimeout(() => {
+                nextWord();
+            }, 2000); 
+        } else {
+            updateScoreboard(); 
+
+            msgBox.className = "message error";
+            msgBox.innerText = `❌ 答錯囉！正確答案是：【${correctAnswer}】`;
+            expBox.innerHTML = `<strong>拆碼大解密：</strong><br>${currentData.exp}`;
+            
+            currentInput = "";
+            document.getElementById('user-input').innerText = "";
+        }
+    }
+
+    // Start Game
+    nextWord();
+</script>
+
+</body>
+</html>
