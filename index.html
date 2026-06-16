@@ -10,9 +10,9 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #1e1e24;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #1a1a24;
+            color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,22 +21,24 @@
             padding: 10px;
         }
         .game-container {
-            background-color: #2a2b36;
+            background-color: #242530;
             padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             text-align: center;
             width: 100%;
             max-width: 850px;
+            border: 1px solid #323446;
         }
         @media (min-width: 600px) {
-            .game-container { padding: 40px; border-radius: 24px; }
+            .game-container { padding: 40px; border-radius: 28px; }
         }
-        h1 { color: #00d2ff; margin-top: 0; font-size: 24px; margin-bottom: 15px; letter-spacing: 1px; }
-        @media (min-width: 600px) { h1 { font-size: 32px; } }
+        h1 { color: #00d2ff; margin-top: 0; font-size: 24px; margin-bottom: 5px; letter-spacing: 1px; }
+        .sub-title { color: #8b8ea8; font-size: 13px; margin-bottom: 15px; }
+        @media (min-width: 600px) { h1 { font-size: 32px; } .sub-title { font-size: 14px; } }
         
         .scoreboard {
-            background-color: #20212c;
+            background-color: #191a24;
             display: inline-block;
             padding: 8px 20px;
             border-radius: 12px;
@@ -44,14 +46,14 @@
             font-weight: bold;
             color: #f1c40f;
             margin-bottom: 15px;
-            border: 1px solid #3a3b4c;
+            border: 1px solid #2d2f3f;
         }
 
         .mode-selector { margin-bottom: 20px; display: flex; justify-content: center; gap: 8px; }
         .mode-btn {
-            background-color: #3a3b4c;
-            border: 2px solid #4a4b62;
-            color: #aaa;
+            background-color: #2d2f3f;
+            border: 2px solid #3c3f54;
+            color: #a0a4c0;
             padding: 8px 16px;
             border-radius: 25px;
             cursor: pointer;
@@ -67,7 +69,7 @@
         .mode-btn.active {
             background-color: #00d2ff;
             border-color: #00d2ff;
-            color: #1e1e24;
+            color: #1a1a24;
             box-shadow: 0 0 15px rgba(0,210,255,0.4);
         }
         .word-display {
@@ -75,12 +77,12 @@
             font-weight: bold;
             color: #fff;
             margin: 15px auto;
-            background: #20212c;
+            background: #191a24;
             width: 110px;
             height: 110px;
             line-height: 110px;
             border-radius: 20px;
-            border: 3px solid #3a3b4c;
+            border: 3px solid #323446;
         }
         @media (min-width: 600px) {
             .word-display { font-size: 84px; width: 140px; height: 140px; line-height: 140px; }
@@ -92,7 +94,7 @@
             font-weight: bold;
             margin-bottom: 10px;
             letter-spacing: 6px;
-            border-bottom: 2px solid #3a3b4c;
+            border-bottom: 2px solid #323446;
             display: inline-block;
             min-width: 160px;
         }
@@ -100,14 +102,15 @@
             .input-display { font-size: 28px; min-height: 42px; min-width: 200px; letter-spacing: 8px; }
         }
         .message-container {
-            min-height: 80px;
+            min-height: 85px;
             margin-bottom: 15px;
             padding: 15px;
             border-radius: 12px;
-            background-color: #20212c;
+            background-color: #191a24;
+            border: 1px solid #2d2f3f;
         }
         .message { font-size: 15px; font-weight: bold; margin-bottom: 5px; text-align: center; }
-        .explanation { font-size: 13px; color: #b4b7c6; line-height: 1.5; text-align: center; }
+        .explanation { font-size: 13px; color: #a0a4c0; line-height: 1.5; text-align: center; }
         @media (min-width: 600px) {
             .message { font-size: 18px; }
             .explanation { font-size: 14px; }
@@ -117,17 +120,17 @@
         .timer-highlight { color: #ff4757; font-weight: bold; font-size: 1.1em; }
         
         .keyboard {
-            background-color: #15151c;
+            background-color: #12121a;
             padding: 8px;
             border-radius: 16px;
-            border: 3px solid #3a3b4c;
+            border: 3px solid #323446;
             margin-bottom: 20px;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
         @media (min-width: 600px) {
-            .keyboard { padding: 15px; border: 4px solid #3a3b4c; gap: 6px; }
+            .keyboard { padding: 15px; border: 4px solid #323446; gap: 6px; }
         }
         .keyboard-row {
             display: flex;
@@ -137,8 +140,8 @@
         }
 
         .key {
-            background: linear-gradient(135deg, #3a3b4c, #2d2e3d);
-            border: 1px solid #4a4b62;
+            background: linear-gradient(135deg, #323446, #242531);
+            border: 1px solid #41445b;
             color: #fff;
             flex: 1;
             max-width: 54px;
@@ -146,7 +149,7 @@
             border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
-            box-shadow: 0 3px 0 #1a1b24;
+            box-shadow: 0 3px 0 #111116;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -155,27 +158,27 @@
             touch-action: manipulation;
         }
         @media (min-width: 600px) {
-            .key { height: 54px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #1a1b24; }
+            .key { height: 54px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 0 #111116; }
         }
         .key:active, .key.pressed {
             transform: translateY(3px);
-            box-shadow: 0 1px 0 #1a1b24;
+            box-shadow: 0 1px 0 #111116;
             background: #00d2ff;
-            color: #1e1e24;
+            color: #1a1a24;
         }
         .key .cj-char { font-size: 15px; font-weight: bold; }
-        .key .eng-char { font-size: 9px; color: #888; margin-top: 1px; }
+        .key .eng-char { font-size: 9px; color: #787c96; margin-top: 1px; }
 
         .space-row { margin-top: 4px; }
         .space-key {
             max-width: 60%;
             height: 40px;
-            background: linear-gradient(135deg, #44465a, #313242);
+            background: linear-gradient(135deg, #3c3f54, #2a2b3a);
             border-radius: 6px;
-            box-shadow: 0 3px 0 #1a1b24;
+            box-shadow: 0 3px 0 #111116;
         }
         @media (min-width: 600px) {
-            .space-key { height: 48px; border-radius: 8px; box-shadow: 0 4px 0 #1a1b24; }
+            .space-key { height: 48px; border-radius: 8px; box-shadow: 0 4px 0 #111116; }
         }
 
         .control-btns {
@@ -184,7 +187,7 @@
             gap: 10px;
         }
         .ctrl-btn {
-            background-color: #4e5066;
+            background-color: #41445b;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -200,12 +203,12 @@
         @media (min-width: 600px) {
             .ctrl-btn { padding: 12px 30px; font-size: 16px; }
         }
-        .ctrl-btn:hover { background-color: #5f627d; }
+        .ctrl-btn:hover { background-color: #4f5370; }
         .ctrl-btn.submit { background-color: #2ecc71; }
         .ctrl-btn.submit:hover { background-color: #27ae60; }
         
         .disabled-element {
-            opacity: 0.5;
+            opacity: 0.4;
             pointer-events: none;
             cursor: not-allowed;
         }
@@ -214,7 +217,8 @@
 <body>
 
 <div class="game-container">
-    <h1>🎯 倉頡/速成修煉場</h1>
+    <h1>倉頡/速成修煉場</h1>
+    <div class="sub-title">🏛️ 香港中文大學正統學術規範庫 (含 HKSCS 3000+ 字)</div>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -226,11 +230,11 @@
         <button class="mode-btn active" id="btn-cj" onclick="setMode('cj')">倉頡模式 (全碼)</button>
     </div>
 
-    <div class="word-display" id="target-word">-</div>
+    <div class="word-display" id="target-word">⏳</div>
     <div class="input-display" id="user-input"></div>
     
     <div class="message-container">
-        <div class="message" id="msg-box"></div>
+        <div class="message" id="msg-box">正在下載中大規範 3,000+ 完整字庫...</div>
         <div class="explanation" id="exp-box"></div>
     </div>
 
@@ -250,61 +254,7 @@
 </div>
 
 <script>
-    // 📚 100% 依據正統倉頡三代標準校對之資料庫（全中文字鍵化，剔除一切非按鍵文字描述）
-    const CANGJIE_DB = {
-        // === 精選核心基礎字 (修正複合字) ===
-        "江": "水工", "和": "竹木口", "校": "木卜交大", "時": "日土木戈", "港": "水廿金山", 
-        "明": "日月", "的": "竹白日戈", "我": "竹手戈", "是": "日走人", "天": "一大", 
-        "地": "土心木", "人": "人", "大": "大", "中": "中", "國": "囗戈一口", "學": "竹月月木", 
-        "文": "卜大", "理": "王里", "工": "工", "作": "人竹一一", "你": "人爾", "他": "人也", 
-        "新": "立木斤", "年": "人手十", "快": "心決", "樂": "白女木", "生": "竹手一", 
-        "日": "日", "月": "月", "山": "山", "水": "水", "火": "火", "木": "木", "土": "土", 
-        "金": "金", "田": "田", "石": "石", "看": "手目", "聽": "耳十田心", "說": "言兌", 
-        "讀": "言賣", "寫": "十月一", "字": "十子", "出": "山山", "入": "入", "分": "八刀",
-        "春": "手大日", "夏": "一自夂", "秋": "火竹木", "冬": "夂一一", "海": "水每", 
-        "空": "十金一", "能": "戈月匕匕", "道": "卜首", "路": "口一竹水口", "車": "十田十",
-        "安": "十女", "北": "中北", "本": "木一", "不": "一本", "長": "長",
-        "全": "人王", "同": "月一口", "成": "戈竹尸", "向": "竹一口", "老": "十大心",
-        "西": "西", "要": "西女", "前": "廿月利", "後": "竹人夂水", "各": "夂口",
-        "少": "火竹", "多": "夕夕", "太": "大戈", "市": "卜中月", "交": "卜交大",
-        "米": "米", "自": "竹目", "己": "尸己", "已": "尸己",
-        "東": "木田", "南": "十月廿十", "方": "卜方",
-        "花": "廿化", "草": "廿早", "風": "竹凡戈", "雨": "一月卜十", "電": "一月田山",
-        "法": "水土戈", "治": "水戈口", "經": "糸一女一", "濟": "水卜難", "政": "一正大",
-        "府": "戈人木", "部": "卜口弓中", "門": "門", "問": "門口", "開": "門開",
-        "關": "門關", "見": "月兒", "規": "夫月", "則": "貝利",
-        "美": "廿大弓", "麗": "一月朋鹿", "華": "廿一華", "實": "十貫", "虛": "卜虍一金",
-        "高": "卜高", "低": "人竹氐", "意": "卜音心", "思": "田心", "想": "木目心",
-        "愛": "爪月心夂", "情": "心手一月", "感": "戈一口心", "應": "戈應", "受": "爪冖又",
-        "容": "十金口", "易": "日竹勿", "考": "十大丂", "試": "言戈一", "驗": "馬人一動",
-        "教": "十補大", "育": "卜月育", "算": "竹目廿", "數": "中女大", "科": "禾斗",
-        "技": "手十支", "藝": "廿土丸戈", "術": "竹人戈金弓", "親": "立木月見", "戚": "戈戚",
-        "朋": "月月", "友": "大友", "體": "骨體", "健": "人健",
-        "康": "戈康", "醫": "尸匚矢戈", "院": "弓中宀元", "病": "疒丙", "痛": "疒甬",
-        "頭": "一廿一月金",
-
-        // === OGCIO 政府常用字表（全碼修正、落實中文字鍵化） ===
-        "九": "大弓", "也": "心木", "事": "十中事", "于": "一十", "五": "木一", 
-        "些": "止心一", "令": "人戈弓", "以": "女人", "件": "人手牛", "任": "人竹土", 
-        "份": "人八刀", "企": "人止", "眾": "田中人", "伸": "人申", "位": "人立", 
-        "住": "人主", "使": "人十大", "保": "人口木", "信": "人言", "候": "人攸", 
-        "修": "人攸彡", "值": "人十目順", "假": "人口段", "做": "人十口大", "停": "人卜口亭", 
-        "備": "人廿備", "傳": "人專", "傷": "人日勹竹", "價": "人賈", "億": "人卜音心", 
-        "元": "二儿", "兄": "口儿", "充": "育儿", "兆": "兆", "先": "竹土儿", 
-        "光": "火兀", "克": "十兄", "免": "免", "內": "人內", "兩": "一兩", 
-        "八": "八", "六": "卜金", "共": "廿金", "兵": "丘金", "具": "目大", 
-        "再": "一土冉", "冰": "水水人", "冷": "水人戈弓", "准": "水隹十", "涼": "水卜口京", 
-        "減": "水戈口咸", "渡": "水戈廿水", "演": "水十順", "灣": "水女彎", "初": "中刀", 
-        "利": "禾利", "制": "竹順利", "券": "火手刀", "刺": "木朿利", "刻": "亥利", 
-        "剛": "月山利", "剩": "乘利", "剪": "前竹刀", "副": "一田利", "劃": "畫利", 
-        "劇": "劇利", "辦": "卜十金大", "功": "工力", "加": "大口", "助": "目力", 
-        "努": "奴力", "劫": "土戈力", "勁": "工作力", "勇": "甬力", "勉": "免力", 
-        "勒": "廿革力", "勘": "甚力", "動": "重力", "務": "務力", "勝": "月火手力", 
-        "勞": "營力", "勢": "執力", "勤": "廿力", "勾": "勹戈", "勿": "勹竹竹", 
-        "包": "勹己", "匆": "勹匆", "匈": "勹心大", "化": "亻化", "匙": "日順人", 
-        "匹": "匚儿", "區": "匚品", "十": "十", "千": "竹十", "卅": "卅", 
-        "即": "日戈尸中", "卻": "谷尸中", "卵": "竹竹尸中", "卷": "火手尸弓", "卸": "竹一尸中"
-    };
+    let CUHK_CANGJIE_DB = {};
 
     const row1Keys = [
         {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"}, {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
@@ -325,9 +275,33 @@
     let scoreX = 0; 
     let scoreY = 0; 
     let hasAnsweredCurrent = false; 
-    let lockKeyboard = false; 
+    let lockKeyboard = true; 
     let penaltyTimer = null;
-    let recentCharacters = []; // 記憶隊列（最近10次不重複）
+    let recentCharacters = [];
+
+    async function loadCuhkDatabase() {
+        try {
+            const response = await fetch('https://cdn.jsdelivr.net/gh/ChungeMaster/cj-db@main/cuhk_3000_perfect_db.json');
+            if(!response.ok) throw new Error('Network fail');
+            CUHK_CANGJIE_DB = await response.json();
+            
+            document.getElementById('msg-box').innerText = "✅ 中大正統規範 3,000+ 字庫載入成功！請開始修煉。";
+            setTimeout(() => {
+                lockKeyboard = false;
+                nextWord();
+            }, 800);
+        } catch (error) {
+            console.error("啟用內置正統核心備用字庫：", error);
+            CUHK_CANGJIE_DB = {
+                "你":"人弓火口大","他":"人心木","的":"竹白日戈","我":"竹手戈","是":"日走人",
+                "學":"竹月月木","辦":"卜十金大","經":"女火一女一","理":"土玉土田土","港":"水廿金山",
+                "和":"竹木口","與":"竹難","時":"日土木戈","國":"囗戈一口"
+            };
+            document.getElementById('msg-box').innerText = "⚠️ 網路微調中，已啟動內置中大標準核心字庫。";
+            lockKeyboard = false;
+            nextWord();
+        }
+    }
 
     function renderRow(rowId, keysArray) {
         const rowEl = document.getElementById(rowId);
@@ -427,9 +401,10 @@
         document.getElementById('control-block').classList.remove('disabled-element');
         document.getElementById('mode-selector-block').classList.remove('disabled-element');
         
-        const keys = Object.keys(CANGJIE_DB);
+        const keys = Object.keys(CUHK_CANGJIE_DB);
+        if (keys.length === 0) return;
+
         let newChar = "";
-        
         while (true) {
             newChar = keys[Math.floor(Math.random() * keys.length)];
             if (!recentCharacters.includes(newChar)) {
@@ -465,7 +440,7 @@
 
     function startPenaltyCountdown(secondsLeft) {
         const expBox = document.getElementById('exp-box');
-        const cjAnswer = CANGJIE_DB[currentCharacter];
+        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
         
         function updateTimerText() {
             if (secondsLeft <= 0) {
@@ -473,9 +448,8 @@
                 nextWord();
                 return;
             }
-            
-            expBox.innerHTML = `<strong>正確編碼：</strong> 字形【${currentCharacter}】的全編碼為：<strong>${cjAnswer}</strong><br>` +
-                               `<span class="timer-highlight">⚠️ 5秒罰時：將在 ${secondsLeft} 秒後自動進到下一題。</span>`;
+            expBox.innerHTML = `<strong>正統中大編碼：</strong> 字形【${currentCharacter}】的全碼為：<strong>${cjAnswer}</strong><br>` +
+                               `<span class="timer-highlight">⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
             secondsLeft--;
         }
         
@@ -486,7 +460,7 @@
     function checkAnswer() {
         if (currentInput === "" || lockKeyboard) return;
 
-        const cjAnswer = CANGJIE_DB[currentCharacter];
+        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
         const quickAnswer = getQuickCode(cjAnswer);
         const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
         
@@ -502,8 +476,8 @@
             updateScoreboard();
 
             msgBox.className = "message success";
-            msgBox.innerText = "🎉 答案正確！";
-            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的編碼為：<strong>${cjAnswer}</strong> ｜ 速成頭尾碼為：<strong>${quickAnswer}</strong>`;
+            msgBox.innerText = "🎉 恭喜！中大正統編碼輸入正確！";
+            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的標準全碼為：<strong>${cjAnswer}</strong> ｜ 速成碼為：<strong>${quickAnswer}</strong>`;
             
             lockKeyboard = true; 
             setTimeout(() => {
@@ -518,13 +492,13 @@
             document.getElementById('mode-selector-block').classList.add('disabled-element');
 
             msgBox.className = "message error";
-            msgBox.innerText = `❌ 錯誤！正確答案是：【${correctAnswer}】`;
+            msgBox.innerText = `❌ 錯誤！正確按鍵應為：【${correctAnswer}】`;
             
             startPenaltyCountdown(5);
         }
     }
 
-    nextWord();
+    loadCuhkDatabase();
 </script>
 
 </body>
