@@ -305,6 +305,9 @@
     let lockKeyboard = false; 
     let penaltyTimer = null;
 
+    // 🔄 記憶隊列：用來儲存最近出現過的 10 個字，防止短期重複抽到
+    let recentCharacters = [];
+
     function renderRow(rowId, keysArray) {
         const rowEl = document.getElementById(rowId);
         keysArray.forEach(k => {
@@ -404,10 +407,20 @@
         document.getElementById('mode-selector-block').classList.remove('disabled-element');
         
         const keys = Object.keys(CANGJIE_DB);
-        let newChar = currentCharacter;
+        let newChar = "";
         
-        while (newChar === currentCharacter) {
+        // 核心邏輯：如果抽出來的字在最近 10 次內出現過，就重新抽
+        while (true) {
             newChar = keys[Math.floor(Math.random() * keys.length)];
+            if (!recentCharacters.includes(newChar)) {
+                break;
+            }
+        }
+        
+        // 將新字推入歷史紀錄，並維持陣列長度最大為 10
+        recentCharacters.push(newChar);
+        if (recentCharacters.length > 10) {
+            recentCharacters.shift(); // 移出最舊的一個字
         }
         
         currentCharacter = newChar;
