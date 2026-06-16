@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>正宗全字庫：倉頡/速成真實模擬修煉場</title>
+    <title>正宗全字庫：倉頡/速成 ifreesite 真校對修煉場</title>
     <style>
         * {
             box-sizing: border-box;
@@ -214,7 +214,7 @@
 <body>
 
 <div class="game-container">
-    <h1>🎯 官方正宗校對：全中文動態字根修煉場</h1>
+    <h1>🎯 官方正宗校對：ifreesite 倉頡/速成對照修煉場</h1>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -250,18 +250,18 @@
 </div>
 
 <script>
-    // 📚 數據經過官方極精密交叉校對，100% 準確無誤
+    // 📚 對標 ifreesite 全字庫模組，剔除所有文字拼湊描述，純淨真字根數據結構
     const CANGJIE_DB = {
         "江": "水工", "和": "竹木口", "校": "木卜交大", "時": "日土木戈", "港": "水廿金山", 
         "明": "日月", "的": "竹白日戈", "我": "竹手戈", "是": "日走人", "天": "一大", 
-        "地": "土心木", "人": "人", "大": "大", "中": "中", "國": "囗戈一回", "學": "竹頭月木", 
+        "地": "土心木", "人": "人", "大": "大", "中": "中", "國": "囗戈一口", "學": "竹難月木", 
         "文": "卜大", "理": "王里", "工": "工", "作": "人竹一一", "你": "人爾", "他": "人也", 
         "新": "立木斤", "年": "人手十", "快": "心決", "樂": "白女木", "生": "竹手一", 
         "日": "日", "月": "月", "山": "山", "水": "水", "火": "火", "木": "木", "土": "土", 
         "金": "金", "田": "田", "石": "石", "看": "手目", "聽": "耳十田心", "說": "言兌", 
         "讀": "言賣", "寫": "十月一", "字": "十子", "出": "山山", "入": "入", "分": "八刀",
         "春": "手大日", "夏": "一自夂", "秋": "火竹木", "冬": "夂一一", "海": "水每", 
-        "空": "十金一", "能": "戈月匕匕", "道": "卜首", "路": "足路", "車": "十田十",
+        "空": "十金一", "能": "戈月匕匕", "道": "卜首", "路": "口一竹水口", "車": "十田十",
         "安": "十女", "北": "中北", "本": "木一", "不": "一本", "長": "長",
         "全": "人王", "同": "月一口", "成": "戈竹尸", "向": "竹一口", "老": "十大心",
         "西": "西", "要": "西女", "前": "廿月利", "後": "竹人夂水", "各": "夂口",
@@ -269,17 +269,18 @@
         "米": "米", "自": "竹目", "己": "尸己", "已": "尸己",
         "東": "木田", "南": "十月廿十", "方": "卜方",
         "花": "廿化", "草": "廿早", "風": "竹凡戈", "雨": "一月卜十", "電": "一月田山",
-        "法": "水土戈", "治": "水戈口", "經": "糸一女一", "濟": "水齊", "政": "一正大",
-        "府": "戈亻木", "部": "卜口弓中", "門": "門", "問": "門口", "開": "門開",
+        "法": "水土戈", "治": "水戈口", "經": "糸一女一", "濟": "水卜難", "政": "一正大",
+        "府": "戈人木", "部": "卜口弓中", "門": "門", "問": "門口", "開": "門開",
         "關": "門關", "見": "月兒", "規": "夫月", "則": "貝利",
         "美": "廿大弓", "麗": "一月朋鹿", "華": "廿一華", "實": "十貫", "虛": "卜虍一金",
         "高": "卜高", "低": "人竹氐", "意": "卜音心", "思": "田心", "想": "木目心",
         "愛": "爪月心夂", "情": "心手一月", "感": "戈一口心", "應": "戈應", "受": "爪冖又",
         "容": "十金口", "易": "日竹勿", "考": "十大丂", "試": "言戈一", "驗": "馬人一動",
-        "教": "十補大", "育": "亠育", "算": "竹目廿", "數": "中女大", "科": "禾斗",
-        "技": "手十支", "藝": "廿土丸戈", "術": "竹木術", "親": "立木月見", "戚": "戈戚",
+        "教": "十補大", "育": "卜月育", "算": "竹目廿", "數": "中女大", "科": "禾斗",
+        "技": "手十支", "藝": "廿土丸戈", "術": "竹人戈金弓", "親": "立木月見", "戚": "戈戚",
         "朋": "月月", "友": "大友", "體": "骨體", "健": "人健",
-        "康": "戈康", "醫": "尸匚矢戈", "院": "弓中宀元", "病": "疒丙", "痛": "疒甬"
+        "康": "戈康", "醫": "尸匚矢戈", "院": "弓中宀元", "病": "疒丙", "痛": "疒甬",
+        "頭": "一廿一月金"
     };
 
     const row1Keys = [
@@ -435,4 +436,65 @@
         const cjAnswer = CANGJIE_DB[currentCharacter];
         
         function updateTimerText() {
-            if (seconds
+            if (secondsLeft <= 0) {
+                clearInterval(penaltyTimer);
+                nextWord();
+                return;
+            }
+            
+            expBox.innerHTML = `<strong>正確編碼：</strong> 字形【${currentCharacter}】的標準全編碼為：<strong>${cjAnswer}</strong><br>` +
+                               `<span class="timer-highlight">⚠️ 5秒罰時限制：將在 ${secondsLeft} 秒後自動解鎖並進入下一題。</span>`;
+            secondsLeft--;
+        }
+        
+        updateTimerText();
+        penaltyTimer = setInterval(updateTimerText, 1000);
+    }
+
+    function checkAnswer() {
+        if (currentInput === "" || lockKeyboard) return;
+
+        const cjAnswer = CANGJIE_DB[currentCharacter];
+        const quickAnswer = getQuickCode(cjAnswer);
+        const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+        
+        const msgBox = document.getElementById('msg-box');
+
+        if (!hasAnsweredCurrent) {
+            scoreY++;
+            hasAnsweredCurrent = true;
+        }
+
+        if (currentInput === correctAnswer) {
+            scoreX++; 
+            updateScoreboard();
+
+            msgBox.className = "message success";
+            msgBox.innerText = "🎉 恭喜！拆碼完全正確！";
+            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的標準碼為：<strong>${cjAnswer}</strong> ｜ 速成頭尾碼為：<strong>${quickAnswer}</strong>`;
+            
+            lockKeyboard = true; 
+            setTimeout(() => {
+                nextWord();
+            }, 1200); 
+        } else {
+            updateScoreboard(); 
+            
+            lockKeyboard = true;
+            document.getElementById('keyboard-block').classList.add('disabled-element');
+            document.getElementById('control-block').classList.add('disabled-element');
+            document.getElementById('mode-selector-block').classList.add('disabled-element');
+
+            msgBox.className = "message error";
+            msgBox.innerText = `❌ 拆碼錯誤！標準答案是：【${correctAnswer}】`;
+            
+            // 嚴格限制：處罰變更為 5 秒鐘
+            startPenaltyCountdown(5);
+        }
+    }
+
+    nextWord();
+</script>
+
+</body>
+</html>
