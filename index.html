@@ -32,8 +32,8 @@
         @media (min-width: 600px) {
             .game-container { padding: 40px; border-radius: 24px; }
         }
-        h1 { color: #00d2ff; margin-top: 0; font-size: 22px; margin-bottom: 10px; }
-        @media (min-width: 600px) { h1 { font-size: 28px; } }
+        h1 { color: #00d2ff; margin-top: 0; font-size: 24px; margin-bottom: 15px; letter-spacing: 1px; }
+        @media (min-width: 600px) { h1 { font-size: 32px; } }
         
         .scoreboard {
             background-color: #20212c;
@@ -250,7 +250,7 @@
 </div>
 
 <script>
-    // 📚 對標 ifreesite 全字庫模組，剔除所有文字拼湊描述，純淨真字根數據結構
+    // 📚 數據完全校對 ifreesite 倉頡三代標準
     const CANGJIE_DB = {
         "江": "水工", "和": "竹木口", "校": "木卜交大", "時": "日土木戈", "港": "水廿金山", 
         "明": "日月", "的": "竹白日戈", "我": "竹手戈", "是": "日走人", "天": "一大", 
@@ -442,8 +442,8 @@
                 return;
             }
             
-            expBox.innerHTML = `<strong>正確編碼：</strong> 字形【${currentCharacter}】的標準全編碼為：<strong>${cjAnswer}</strong><br>` +
-                               `<span class="timer-highlight">⚠️ 5秒罰時限制：將在 ${secondsLeft} 秒後自動解鎖並進入下一題。</span>`;
+            expBox.innerHTML = `<strong>正確編碼：</strong> 字形【${currentCharacter}】的全編碼為：<strong>${cjAnswer}</strong><br>` +
+                               `<span class="timer-highlight">⚠️ 5秒罰時：將在 ${secondsLeft} 秒後自動進到下一題。</span>`;
             secondsLeft--;
         }
         
@@ -470,8 +470,8 @@
             updateScoreboard();
 
             msgBox.className = "message success";
-            msgBox.innerText = "🎉 恭喜！拆碼完全正確！";
-            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的標準碼為：<strong>${cjAnswer}</strong> ｜ 速成頭尾碼為：<strong>${quickAnswer}</strong>`;
+            msgBox.innerText = "🎉 答案正確！";
+            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的編碼為：<strong>${cjAnswer}</strong> ｜ 速成頭尾碼為：<strong>${quickAnswer}</strong>`;
             
             lockKeyboard = true; 
             setTimeout(() => {
@@ -486,9 +486,8 @@
             document.getElementById('mode-selector-block').classList.add('disabled-element');
 
             msgBox.className = "message error";
-            msgBox.innerText = `❌ 拆碼錯誤！標準答案是：【${correctAnswer}】`;
+            msgBox.innerText = `❌ 錯誤！正確答案是：【${correctAnswer}】`;
             
-            // 嚴格限制：處罰變更為 5 秒鐘
             startPenaltyCountdown(5);
         }
     }
