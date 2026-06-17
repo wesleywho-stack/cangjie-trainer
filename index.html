@@ -254,47 +254,50 @@
 </div>
 
 <script>
-    // 🧠 連接已完全轉換為香港中文大學（CUHK）標準的 3,000 字外部資料庫
-    let CUHK_CANGJIE_DB = {};
-
+    // ===== Cangjie 6 keyboard layout (radical -> English letter) =====
     const row1Keys = [
-        {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"}, {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
+        {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"},
+        {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
     ];
     const row2Keys = [
-        {eng:"A", cj:"日"}, {eng:"S", cj:"尸"}, {eng:"D", cj:"木"}, {eng:"F", cj:"火"}, {eng:"G", cj:"土"}, {eng:"H", cj:"竹"}, {eng:"J", cj:"十"}, {eng:"K", cj:"大"}, {eng:"L", cj:"中"}
+        {eng:"A", cj:"日"}, {eng:"S", cj:"尸"}, {eng:"D", cj:"木"}, {eng:"F", cj:"火"}, {eng:"G", cj:"土"},
+        {eng:"H", cj:"竹"}, {eng:"J", cj:"十"}, {eng:"K", cj:"大"}, {eng:"L", cj:"中"}
     ];
     const row3Keys = [
-        {eng:"Z", cj:"重"}, {eng:"X", cj:"難"}, {eng:"C", cj:"金"}, {eng:"V", cj:"女"}, {eng:"B", cj:"月"}, {eng:"N", cj:"弓"}, {eng:"M", cj:"一"}
+        {eng:"Z", cj:"重"}, {eng:"X", cj:"難"}, {eng:"C", cj:"金"}, {eng:"V", cj:"女"}, {eng:"B", cj:"月"},
+        {eng:"N", cj:"弓"}, {eng:"M", cj:"一"}
     ];
 
     const allKeys = [...row1Keys, ...row2Keys, ...row3Keys];
+    // Lookup map: radical Chinese char -> English letter (uppercase)
+    const cjToEng = {};
+    allKeys.forEach(k => { cjToEng[k.cj] = k.eng.toUpperCase(); });
 
-    let currentMode = 'cj'; 
+    // ===== State =====
+    let CUHK_CANGJIE_DB = {};
+    let currentMode = 'cj';
     let currentCharacter = "";
-    let currentInput = "";
-    
-    let scoreX = 0; 
-    let scoreY = 0; 
-    let hasAnsweredCurrent = false; 
-    let lockKeyboard = true; 
+    let currentInput = "";        // Stores ENGLISH letters only (e.g. "ONF")
+    let scoreX = 0;
+    let scoreY = 0;
+    let hasAnsweredCurrent = false;
+    let lockKeyboard = true;
     let penaltyTimer = null;
     let recentCharacters = [];
 
+    // ===== Database load =====
     async function loadCuhkDatabase() {
         try {
-            // Load local Cangjie 6 character table
             const response = await fetch('cangjie6_db.json');
-            if(!response.ok) throw new Error('Network fail');
+            if (!response.ok) throw new Error('HTTP ' + response.status);
             CUHK_CANGJIE_DB = await response.json();
             
-            document.getElementById('msg-box').innerText = "✅ 倉頡六代碼表載入成功！共 " + Object.keys(CUHK_CANGJIE_DB).length + " 字。請開始修煉。";
-            setTimeout(() => {
-                lockKeyboard = false;
-                nextWord();
-            }, 800);
+            const count = Object.keys(CUHK_CANGJIE_DB).length;
+            document.getElementById('msg-box').innerText = "✅ 倉頡六代碼表載入成功！共 " + count + " 字。請開始修煉。";
+            lockKeyboard = false;
+            nextWord();
         } catch (error) {
             console.error("載入失敗，啟用內置備用字庫：", error);
-            // Fallback minimal database
             CUHK_CANGJIE_DB = {
                 "你":"onf","好":"vnd","我":"hqi","愛":"bbphe","學":"xbnd","習":"ssha",
                 "是":"amyo","的":"h","大":"k","來":"doo","和":"hdr","不":"mf","在":"klg","有":"kb","一":"m"
@@ -305,8 +308,10 @@
         }
     }
 
+    // ===== Keyboard rendering =====
     function renderRow(rowId, keysArray) {
         const rowEl = document.getElementById(rowId);
+        rowEl.innerHTML = '';
         keysArray.forEach(k => {
             const btn = document.createElement('button');
             btn.className = 'key';
@@ -315,15 +320,17 @@
             
             const pressHandler = (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 if (lockKeyboard) return;
-                handleKeyPress(k.cj);
+                // Pass the English letter (uppercase) to match the DB code
+                handleKeyPress(k.eng.toUpperCase());
                 triggerVisualFeedback(btn);
             };
             
             btn.addEventListener('touchstart', pressHandler, {passive: false});
             btn.addEventListener('mousedown', (e) => {
                 if (e.pointerType === 'touch' || lockKeyboard) return;
-                handleKeyPress(k.cj);
+                handleKeyPress(k.eng.toUpperCase());
                 triggerVisualFeedback(btn);
             });
             
@@ -338,6 +345,7 @@
     const spaceBtn = document.getElementById('key-SPACE');
     const spacePressHandler = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         if (lockKeyboard) return;
         triggerVisualFeedback(spaceBtn);
         checkAnswer();
@@ -349,24 +357,24 @@
         checkAnswer();
     });
 
+    // Physical keyboard support
     document.addEventListener('keydown', (e) => {
         if (lockKeyboard) return;
         
-        const char = e.key.toUpperCase();
-        if (char === 'ENTER' || e.key === ' ') {
-            e.preventDefault(); 
-            const btn = document.getElementById('key-SPACE');
-            triggerVisualFeedback(btn);
+        const key = e.key;
+        const upper = key.toUpperCase();
+        if (key === 'Enter' || key === ' ') {
+            e.preventDefault();
+            triggerVisualFeedback(spaceBtn);
             checkAnswer();
-        } else if (char === 'BACKSPACE') {
+        } else if (key === 'Backspace') {
+            e.preventDefault();
             clearInput();
-        } else {
-            const found = allKeys.find(k => k.eng === char);
-            if (found) {
-                handleKeyPress(found.cj);
-                const btn = document.getElementById(`key-${char}`);
-                triggerVisualFeedback(btn);
-            }
+        } else if (/^[a-zA-Z]$/.test(key)) {
+            e.preventDefault();
+            handleKeyPress(upper);
+            const btn = document.getElementById(`key-${upper}`);
+            if (btn) triggerVisualFeedback(btn);
         }
     });
 
@@ -385,45 +393,67 @@
         nextWord();
     }
 
-    function handleKeyPress(cjChar) {
-        if (currentMode === 'quick' && currentInput.length >= 2) return; 
-        currentInput += cjChar;
+    // Now accepts English letter (e.g. "O", "N", "F")
+    function handleKeyPress(letter) {
+        // In quick mode, cap at 2 keys (since quick code = first + last of full code)
+        if (currentMode === 'quick' && currentInput.length >= 2) return;
+        currentInput += letter;
         document.getElementById('user-input').innerText = currentInput;
     }
 
     function clearInput() {
-        if (lockKeyboard) return;
         currentInput = "";
-        document.getElementById('user-input').innerText = "";
+        const el = document.getElementById('user-input');
+        if (el) el.innerText = "";
     }
 
     function nextWord() {
+        // Reset all states
         lockKeyboard = false;
+        hasAnsweredCurrent = false;
+        clearInput();
+        
+        // Clear any pending penalty timer
+        if (penaltyTimer !== null) {
+            clearInterval(penaltyTimer);
+            penaltyTimer = null;
+        }
+        
         document.getElementById('keyboard-block').classList.remove('disabled-element');
         document.getElementById('control-block').classList.remove('disabled-element');
         document.getElementById('mode-selector-block').classList.remove('disabled-element');
         
         const keys = Object.keys(CUHK_CANGJIE_DB);
-        if (keys.length === 0) return;
+        if (keys.length === 0) {
+            document.getElementById('target-word').innerText = "⚠️";
+            return;
+        }
 
+        // Bug fix: use safe iteration limit; never infinite-loop
         let newChar = "";
-        while (true) {
-            newChar = keys[Math.floor(Math.random() * keys.length)];
-            if (!recentCharacters.includes(newChar)) {
+        const maxTries = Math.min(50, keys.length);
+        for (let i = 0; i < maxTries; i++) {
+            const candidate = keys[Math.floor(Math.random() * keys.length)];
+            if (!recentCharacters.includes(candidate)) {
+                newChar = candidate;
                 break;
             }
+        }
+        // Fallback if all tries hit recent (shouldn't happen with 97k chars and 10 recents)
+        if (!newChar) {
+            newChar = keys[Math.floor(Math.random() * keys.length)];
         }
         
         recentCharacters.push(newChar);
         if (recentCharacters.length > 10) {
-            recentCharacters.shift(); 
+            recentCharacters.shift();
         }
         
         currentCharacter = newChar;
-        document.getElementById('target-word').innerText = currentCharacter;
-        hasAnsweredCurrent = false; 
-        clearInput();
+        // Bug fix: ensure DOM update happens AFTER state, with explicit textContent
+        document.getElementById('target-word').textContent = currentCharacter;
         document.getElementById('msg-box').innerText = "";
+        document.getElementById('msg-box').className = "message";
         document.getElementById('exp-box').innerText = "";
     }
 
@@ -441,25 +471,27 @@
     }
 
     function startPenaltyCountdown(secondsLeft) {
-    const expBox = document.getElementById('exp-box');
-    const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
-    const quickAnswer = getQuickCode(cjAnswer);
-    const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+        const expBox = document.getElementById('exp-box');
+        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
+        const quickAnswer = getQuickCode(cjAnswer);
+        const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+        const label = currentMode === 'quick' ? '速成碼' : '倉頡編碼';
 
-    function updateTimerText() {
-        if (secondsLeft <= 0) {
-            clearInterval(penaltyTimer);
-            nextWord();
-            return;
+        function updateTimerText() {
+            if (secondsLeft <= 0) {
+                clearInterval(penaltyTimer);
+                penaltyTimer = null;
+                nextWord();
+                return;
+            }
+            expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${label}為：<strong>${correctAnswer}</strong><br>` +
+                               `<span class="timer-highlight">⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
+            secondsLeft--;
         }
-        expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${currentMode === 'quick' ? '速成碼' : '倉頡編碼'}為：<strong>${correctAnswer}</strong><br>` +
-                           `<span class='timer-highlight'>⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
-        secondsLeft--;
-    }
 
-    updateTimerText();
-    penaltyTimer = setInterval(updateTimerText, 1000);
-}
+        updateTimerText();
+        penaltyTimer = setInterval(updateTimerText, 1000);
+    }
 
     function checkAnswer() {
         if (currentInput === "" || lockKeyboard) return;
@@ -475,22 +507,22 @@
             hasAnsweredCurrent = true;
         }
 
-        if (currentInput === correctAnswer) {
-            scoreX++; 
+        if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+            scoreX++;
             updateScoreboard();
 
             msgBox.className = "message success";
-            msgBox.innerText = "🎉 恭喜！中大正統編碼輸入正確！";
+            msgBox.innerText = "🎉 恭喜！倉頡編碼輸入正確！";
             const displayCode = currentMode === 'quick' ? quickAnswer : cjAnswer;
             const label = currentMode === 'quick' ? '速成碼' : '標準全碼';
             document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的${label}為：<strong>${displayCode}</strong>`;
             
-            lockKeyboard = true; 
+            lockKeyboard = true;
             setTimeout(() => {
                 nextWord();
-            }, 1200); 
+            }, 1200);
         } else {
-            updateScoreboard(); 
+            updateScoreboard();
             
             lockKeyboard = true;
             document.getElementById('keyboard-block').classList.add('disabled-element');
