@@ -218,7 +218,7 @@
 
 <div class="game-container">
     <h1>倉頡/速成修煉場</h1>
-    <div class="sub-title">🏛️ 香港中文大學正統學術規範庫 (含 HKSCS 3000+ 字)</div>
+    <div class="sub-title">🏛️ 倉頡六代碼表 (97,000+ 字)</div>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -282,25 +282,24 @@
 
     async function loadCuhkDatabase() {
         try {
-            // 從雲端節點拉取經過徹底清洗、符合中大標準的 3,000 字 JSON 表
-            const response = await fetch('https://cdn.jsdelivr.net/gh/ChungeMaster/cj-db@main/cuhk_3000_perfect_db.json');
+            // Load local Cangjie 6 character table
+            const response = await fetch('cangjie6_db.json');
             if(!response.ok) throw new Error('Network fail');
             CUHK_CANGJIE_DB = await response.json();
             
-            document.getElementById('msg-box').innerText = "✅ 中大正統規範 3,000+ 字庫載入成功！請開始修煉。";
+            document.getElementById('msg-box').innerText = "✅ 倉頡六代碼表載入成功！共 " + Object.keys(CUHK_CANGJIE_DB).length + " 字。請開始修煉。";
             setTimeout(() => {
                 lockKeyboard = false;
                 nextWord();
             }, 800);
         } catch (error) {
-            console.error("網路異常，啟用本地中大核心字庫備用包：", error);
-            // 當無網路或載入失敗時的嚴格中大基礎核心備用字
+            console.error("載入失敗，啟用內置備用字庫：", error);
+            // Fallback minimal database
             CUHK_CANGJIE_DB = {
-                "你":"人弓火口大","他":"人心木","的":"竹白日戈","我":"竹手戈","是":"日走人",
-                "學":"竹月月木","辦":"卜十金大","經":"女火一女一","理":"土玉土田土","港":"水廿金山",
-                "和":"竹木口","與":"竹難","時":"日土木戈","國":"囗戈一口"
+                "你":"onf","好":"vnd","我":"hqi","愛":"bbphe","學":"xbnd","習":"ssha",
+                "是":"amyo","的":"h","大":"k","來":"doo","和":"hdr","不":"mf","在":"klg","有":"kb","一":"m"
             };
-            document.getElementById('msg-box').innerText = "⚠️ 網路微調中，已自動啟用內置中大標準核心字庫。";
+            document.getElementById('msg-box').innerText = "⚠️ 載入失敗，已啟用內置備用字庫。";
             lockKeyboard = false;
             nextWord();
         }
@@ -453,7 +452,7 @@
             nextWord();
             return;
         }
-        expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${currentMode === 'quick' ? '速成碼' : '正統中大編碼'}為：<strong>${correctAnswer}</strong><br>` +
+        expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${currentMode === 'quick' ? '速成碼' : '倉頡編碼'}為：<strong>${correctAnswer}</strong><br>` +
                            `<span class='timer-highlight'>⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
         secondsLeft--;
     }
