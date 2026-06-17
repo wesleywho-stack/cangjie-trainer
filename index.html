@@ -442,23 +442,25 @@
     }
 
     function startPenaltyCountdown(secondsLeft) {
-        const expBox = document.getElementById('exp-box');
-        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
-        
-        function updateTimerText() {
-            if (secondsLeft <= 0) {
-                clearInterval(penaltyTimer);
-                nextWord();
-                return;
-            }
-            expBox.innerHTML = `<strong>正統中大編碼：</strong> 字形【${currentCharacter}】的全碼為：<strong>${cjAnswer}</strong><br>` +
-                               `<span class="timer-highlight">⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
-            secondsLeft--;
+    const expBox = document.getElementById('exp-box');
+    const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
+    const quickAnswer = getQuickCode(cjAnswer);
+    const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+
+    function updateTimerText() {
+        if (secondsLeft <= 0) {
+            clearInterval(penaltyTimer);
+            nextWord();
+            return;
         }
-        
-        updateTimerText();
-        penaltyTimer = setInterval(updateTimerText, 1000);
+        expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${currentMode === 'quick' ? '速成碼' : '正統中大編碼'}為：<strong>${correctAnswer}</strong><br>` +
+                           `<span class='timer-highlight'>⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
+        secondsLeft--;
     }
+
+    updateTimerText();
+    penaltyTimer = setInterval(updateTimerText, 1000);
+}
 
     function checkAnswer() {
         if (currentInput === "" || lockKeyboard) return;
@@ -480,7 +482,9 @@
 
             msgBox.className = "message success";
             msgBox.innerText = "🎉 恭喜！中大正統編碼輸入正確！";
-            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的標準全碼為：<strong>${cjAnswer}</strong> ｜ 速成碼為：<strong>${quickAnswer}</strong>`;
+            const displayCode = currentMode === 'quick' ? quickAnswer : cjAnswer;
+            const label = currentMode === 'quick' ? '速成碼' : '標準全碼';
+            document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的${label}為：<strong>${displayCode}</strong>`;
             
             lockKeyboard = true; 
             setTimeout(() => {
