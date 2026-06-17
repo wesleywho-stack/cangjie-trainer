@@ -10,7 +10,7 @@
             -webkit-tap-highlight-color: transparent;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang HK", "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif;
             background-color: #1a1a24;
             color: #ffffff;
             display: flex;
@@ -88,18 +88,19 @@
             .word-display { font-size: 84px; width: 140px; height: 140px; line-height: 140px; }
         }
         .input-display {
-            font-size: 24px;
-            min-height: 38px;
+            font-size: 28px;
+            min-height: 44px;
             color: #00d2ff;
             font-weight: bold;
             margin-bottom: 10px;
-            letter-spacing: 6px;
+            letter-spacing: 4px;
             border-bottom: 2px solid #323446;
             display: inline-block;
             min-width: 160px;
+            line-height: 44px;
         }
         @media (min-width: 600px) {
-            .input-display { font-size: 28px; min-height: 42px; min-width: 200px; letter-spacing: 8px; }
+            .input-display { font-size: 32px; min-height: 48px; min-width: 200px; letter-spacing: 6px; line-height: 48px; }
         }
         .message-container {
             min-height: 85px;
@@ -166,8 +167,8 @@
             background: #00d2ff;
             color: #1a1a24;
         }
-        .key .cj-char { font-size: 15px; font-weight: bold; }
-        .key .eng-char { font-size: 9px; color: #787c96; margin-top: 1px; }
+        .key .cj-char { font-size: 17px; font-weight: bold; line-height: 1; }
+        .key .eng-char { font-size: 9px; color: #787c96; margin-top: 2px; }
 
         .space-row { margin-top: 4px; }
         .space-key {
@@ -218,7 +219,7 @@
 
 <div class="game-container">
     <h1>倉頡/速成修煉場</h1>
-    <div class="sub-title">🏛️ 倉頡六代碼表 (97,000+ 字)</div>
+    <div class="sub-title">🏛️ 倉頡六代碼表 (常用字範圍)</div>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -254,7 +255,7 @@
 </div>
 
 <script>
-    // ===== Cangjie 6 keyboard layout (radical -> English letter) =====
+    // ===== Cangjie 6 keyboard layout =====
     const row1Keys = [
         {eng:"Q", cj:"手"}, {eng:"W", cj:"田"}, {eng:"E", cj:"水"}, {eng:"R", cj:"口"}, {eng:"T", cj:"廿"},
         {eng:"Y", cj:"卜"}, {eng:"U", cj:"山"}, {eng:"I", cj:"戈"}, {eng:"O", cj:"人"}, {eng:"P", cj:"心"}
@@ -269,15 +270,12 @@
     ];
 
     const allKeys = [...row1Keys, ...row2Keys, ...row3Keys];
-    // Lookup map: radical Chinese char -> English letter (uppercase)
-    const cjToEng = {};
-    allKeys.forEach(k => { cjToEng[k.cj] = k.eng.toUpperCase(); });
 
     // ===== State =====
-    let CUHK_CANGJIE_DB = {};
+    let PRACTICE_DB = {};      // pre-filtered CJK Unified BMP only
     let currentMode = 'cj';
     let currentCharacter = "";
-    let currentInput = "";        // Stores ENGLISH letters only (e.g. "ONF")
+    let currentInput = "";     // Chinese radicals concatenated, e.g. "手田水"
     let scoreX = 0;
     let scoreY = 0;
     let hasAnsweredCurrent = false;
@@ -285,22 +283,27 @@
     let penaltyTimer = null;
     let recentCharacters = [];
 
+    // ===== Helpers =====
+    // DB is pre-filtered at build time to CJK Unified BMP only (U+4E00-U+9FFF)
+    // so every character renders on every system with any CJK font.
+
     // ===== Database load =====
     async function loadCuhkDatabase() {
         try {
             const response = await fetch('cangjie6_db.json');
             if (!response.ok) throw new Error('HTTP ' + response.status);
-            CUHK_CANGJIE_DB = await response.json();
+            PRACTICE_DB = await response.json();
             
-            const count = Object.keys(CUHK_CANGJIE_DB).length;
-            document.getElementById('msg-box').innerText = "✅ 倉頡六代碼表載入成功！共 " + count + " 字。請開始修煉。";
+            const total = Object.keys(PRACTICE_DB).length;
+            document.getElementById('msg-box').innerText =
+                `✅ 倉頡六代碼表載入成功！常用 CJK ${total} 字。請開始修煉。`;
             lockKeyboard = false;
             nextWord();
         } catch (error) {
             console.error("載入失敗，啟用內置備用字庫：", error);
-            CUHK_CANGJIE_DB = {
-                "你":"onf","好":"vnd","我":"hqi","愛":"bbphe","學":"xbnd","習":"ssha",
-                "是":"amyo","的":"h","大":"k","來":"doo","和":"hdr","不":"mf","在":"klg","有":"kb","一":"m"
+            PRACTICE_DB = {
+                "你":"ONF","好":"VND","我":"HQI","愛":"BBPHE","學":"XBND","習":"SSHA",
+                "是":"AMYO","的":"H","大":"K","來":"DOO","和":"HDR","不":"MF","在":"KLG","有":"KB","一":"M"
             };
             document.getElementById('msg-box').innerText = "⚠️ 載入失敗，已啟用內置備用字庫。";
             lockKeyboard = false;
@@ -322,15 +325,15 @@
                 e.preventDefault();
                 e.stopPropagation();
                 if (lockKeyboard) return;
-                // Pass the English letter (uppercase) to match the DB code
-                handleKeyPress(k.eng.toUpperCase());
+                // Pass the radical Chinese char; conversion happens in handleKeyPress
+                handleKeyPress(k.cj);
                 triggerVisualFeedback(btn);
             };
             
             btn.addEventListener('touchstart', pressHandler, {passive: false});
             btn.addEventListener('mousedown', (e) => {
                 if (e.pointerType === 'touch' || lockKeyboard) return;
-                handleKeyPress(k.eng.toUpperCase());
+                handleKeyPress(k.cj);
                 triggerVisualFeedback(btn);
             });
             
@@ -357,7 +360,7 @@
         checkAnswer();
     });
 
-    // Physical keyboard support
+    // Physical keyboard support — convert letter -> radical for display
     document.addEventListener('keydown', (e) => {
         if (lockKeyboard) return;
         
@@ -372,7 +375,8 @@
             clearInput();
         } else if (/^[a-zA-Z]$/.test(key)) {
             e.preventDefault();
-            handleKeyPress(upper);
+            const k = allKeys.find(k => k.eng === upper);
+            if (k) handleKeyPress(k.cj);
             const btn = document.getElementById(`key-${upper}`);
             if (btn) triggerVisualFeedback(btn);
         }
@@ -393,27 +397,24 @@
         nextWord();
     }
 
-    // Now accepts English letter (e.g. "O", "N", "F")
-    function handleKeyPress(letter) {
-        // In quick mode, cap at 2 keys (since quick code = first + last of full code)
+    // Accepts Chinese radical; appends to currentInput which is compared in radicals
+    function handleKeyPress(cjChar) {
         if (currentMode === 'quick' && currentInput.length >= 2) return;
-        currentInput += letter;
-        document.getElementById('user-input').innerText = currentInput;
+        currentInput += cjChar;
+        document.getElementById('user-input').textContent = currentInput;
     }
 
     function clearInput() {
         currentInput = "";
         const el = document.getElementById('user-input');
-        if (el) el.innerText = "";
+        if (el) el.textContent = "";
     }
 
     function nextWord() {
-        // Reset all states
         lockKeyboard = false;
         hasAnsweredCurrent = false;
         clearInput();
         
-        // Clear any pending penalty timer
         if (penaltyTimer !== null) {
             clearInterval(penaltyTimer);
             penaltyTimer = null;
@@ -423,13 +424,12 @@
         document.getElementById('control-block').classList.remove('disabled-element');
         document.getElementById('mode-selector-block').classList.remove('disabled-element');
         
-        const keys = Object.keys(CUHK_CANGJIE_DB);
+        const keys = Object.keys(PRACTICE_DB);
         if (keys.length === 0) {
-            document.getElementById('target-word').innerText = "⚠️";
+            document.getElementById('target-word').textContent = "⚠️";
             return;
         }
 
-        // Bug fix: use safe iteration limit; never infinite-loop
         let newChar = "";
         const maxTries = Math.min(50, keys.length);
         for (let i = 0; i < maxTries; i++) {
@@ -439,7 +439,6 @@
                 break;
             }
         }
-        // Fallback if all tries hit recent (shouldn't happen with 97k chars and 10 recents)
         if (!newChar) {
             newChar = keys[Math.floor(Math.random() * keys.length)];
         }
@@ -450,8 +449,11 @@
         }
         
         currentCharacter = newChar;
-        // Bug fix: ensure DOM update happens AFTER state, with explicit textContent
-        document.getElementById('target-word').textContent = currentCharacter;
+        const targetEl = document.getElementById('target-word');
+        // Use textContent (safer for arbitrary chars) and explicit fallback font
+        targetEl.textContent = currentCharacter;
+        targetEl.style.fontFamily = '"PingFang HK", "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif';
+        
         document.getElementById('msg-box').innerText = "";
         document.getElementById('msg-box').className = "message";
         document.getElementById('exp-box').innerText = "";
@@ -472,7 +474,7 @@
 
     function startPenaltyCountdown(secondsLeft) {
         const expBox = document.getElementById('exp-box');
-        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
+        const cjAnswer = PRACTICE_DB[currentCharacter];
         const quickAnswer = getQuickCode(cjAnswer);
         const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
         const label = currentMode === 'quick' ? '速成碼' : '倉頡編碼';
@@ -496,9 +498,12 @@
     function checkAnswer() {
         if (currentInput === "" || lockKeyboard) return;
 
-        const cjAnswer = CUHK_CANGJIE_DB[currentCharacter];
+        const cjAnswer = PRACTICE_DB[currentCharacter];
         const quickAnswer = getQuickCode(cjAnswer);
-        const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
+        // The DB code is uppercase letters; convert radical->letter for comparison
+        const correctRadicals = codeToRadicals(cjAnswer);
+        const correctRadicalsQuick = codeToRadicals(quickAnswer);
+        const correctRadicalAnswer = currentMode === 'quick' ? correctRadicalsQuick : correctRadicals;
         
         const msgBox = document.getElementById('msg-box');
 
@@ -507,7 +512,7 @@
             hasAnsweredCurrent = true;
         }
 
-        if (currentInput.toUpperCase() === correctAnswer.toUpperCase()) {
+        if (currentInput === correctRadicalAnswer) {
             scoreX++;
             updateScoreboard();
 
@@ -530,10 +535,22 @@
             document.getElementById('mode-selector-block').classList.add('disabled-element');
 
             msgBox.className = "message error";
-            msgBox.innerText = `❌ 錯誤！正確按鍵應為：【${correctAnswer}】`;
+            msgBox.innerText = `❌ 錯誤！正確按鍵應為：【${correctRadicalAnswer}】(代碼 ${correctAnswer})`;
             
             startPenaltyCountdown(5);
         }
+    }
+
+    // Convert Cangjie code letters to radical Chinese chars for display comparison
+    const _engToRadical = {};
+    allKeys.forEach(k => { _engToRadical[k.eng.toUpperCase()] = k.cj; });
+    function codeToRadicals(code) {
+        if (!code) return "";
+        let out = "";
+        for (const ch of code.toUpperCase()) {
+            out += _engToRadical[ch] || ch;
+        }
+        return out;
     }
 
     loadCuhkDatabase();
