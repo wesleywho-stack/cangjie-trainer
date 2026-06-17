@@ -219,7 +219,7 @@
 
 <div class="game-container">
     <h1>倉頡/速成修煉場</h1>
-    <div class="sub-title">🏛️ 倉頡六代碼表 (常用字範圍)</div>
+    <div class="sub-title">🏛️ 倉頡五代正體字碼表 (HK 繁體字)</div>
     
     <div class="scoreboard">
         📊 修煉成果：<span id="score-x">0</span> / <span id="score-y">0</span> 
@@ -235,7 +235,7 @@
     <div class="input-display" id="user-input"></div>
     
     <div class="message-container">
-        <div class="message" id="msg-box">正在下載中大規範 3,000+ 完整字庫...</div>
+        <div class="message" id="msg-box">正在下載倉頡五代繁體字碼表...</div>
         <div class="explanation" id="exp-box"></div>
     </div>
 
@@ -296,7 +296,7 @@
             
             const total = Object.keys(PRACTICE_DB).length;
             document.getElementById('msg-box').innerText =
-                `✅ 倉頡六代碼表載入成功！常用 CJK ${total} 字。請開始修煉。`;
+                `✅ 倉頡五代繁體字碼表載入成功！常用正體 ${total} 字（已過濾簡體字）。請開始修煉。`;
             lockKeyboard = false;
             nextWord();
         } catch (error) {
@@ -473,11 +473,19 @@
     }
 
     function startPenaltyCountdown(secondsLeft) {
+        // Guard against double-call
+        if (penaltyTimer !== null) {
+            clearInterval(penaltyTimer);
+            penaltyTimer = null;
+        }
+        
         const expBox = document.getElementById('exp-box');
         const cjAnswer = PRACTICE_DB[currentCharacter];
         const quickAnswer = getQuickCode(cjAnswer);
-        const correctAnswer = currentMode === 'quick' ? quickAnswer : cjAnswer;
-        const label = currentMode === 'quick' ? '速成碼' : '倉頡編碼';
+        const isQuick = currentMode === 'quick';
+        const correctAnswer = isQuick ? quickAnswer : cjAnswer;
+        const correctRadicals = codeToRadicals(correctAnswer);
+        const label = isQuick ? '速成碼' : '倉頡編碼';
 
         function updateTimerText() {
             if (secondsLeft <= 0) {
@@ -486,8 +494,8 @@
                 nextWord();
                 return;
             }
-            expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${label}為：<strong>${correctAnswer}</strong><br>` +
-                               `<span class="timer-highlight">⚠️ 5秒罰時：網頁將在 ${secondsLeft} 秒後自動為你更換新字。</span>`;
+            expBox.innerHTML = `<strong>正確答案：</strong> 字形【${currentCharacter}】的${label}為：<strong>${correctAnswer}</strong> (按鍵：${correctRadicals})<br>` +
+                               `<span class="timer-highlight">⚠️ ${secondsLeft} 秒後自動更換新字。</span>`;
             secondsLeft--;
         }
 
@@ -500,10 +508,11 @@
 
         const cjAnswer = PRACTICE_DB[currentCharacter];
         const quickAnswer = getQuickCode(cjAnswer);
-        // The DB code is uppercase letters; convert radical->letter for comparison
         const correctRadicals = codeToRadicals(cjAnswer);
         const correctRadicalsQuick = codeToRadicals(quickAnswer);
-        const correctRadicalAnswer = currentMode === 'quick' ? correctRadicalsQuick : correctRadicals;
+        const isQuick = currentMode === 'quick';
+        const correctRadicalAnswer = isQuick ? correctRadicalsQuick : correctRadicals;
+        const correctAnswer = isQuick ? quickAnswer : cjAnswer;
         
         const msgBox = document.getElementById('msg-box');
 
@@ -518,8 +527,8 @@
 
             msgBox.className = "message success";
             msgBox.innerText = "🎉 恭喜！倉頡編碼輸入正確！";
-            const displayCode = currentMode === 'quick' ? quickAnswer : cjAnswer;
-            const label = currentMode === 'quick' ? '速成碼' : '標準全碼';
+            const displayCode = isQuick ? quickAnswer : cjAnswer;
+            const label = isQuick ? '速成碼' : '標準全碼';
             document.getElementById('exp-box').innerHTML = `字形【<strong>${currentCharacter}</strong>】的${label}為：<strong>${displayCode}</strong>`;
             
             lockKeyboard = true;
@@ -529,13 +538,13 @@
         } else {
             updateScoreboard();
             
+            msgBox.className = "message error";
+            msgBox.innerText = `❌ 錯誤！正確按鍵應為：【${correctRadicalAnswer}】(代碼 ${correctAnswer})`;
+            
             lockKeyboard = true;
             document.getElementById('keyboard-block').classList.add('disabled-element');
             document.getElementById('control-block').classList.add('disabled-element');
             document.getElementById('mode-selector-block').classList.add('disabled-element');
-
-            msgBox.className = "message error";
-            msgBox.innerText = `❌ 錯誤！正確按鍵應為：【${correctRadicalAnswer}】(代碼 ${correctAnswer})`;
             
             startPenaltyCountdown(5);
         }
